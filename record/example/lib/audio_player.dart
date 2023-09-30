@@ -5,7 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class AudioPlayer extends StatefulWidget {
+class AudioRecPlayer extends StatefulWidget {
   /// Path from where to play recorded audio
   final String source;
 
@@ -13,17 +13,17 @@ class AudioPlayer extends StatefulWidget {
   /// Setting this to null hides the delete button
   final VoidCallback onDelete;
 
-  const AudioPlayer({
+  const AudioRecPlayer({
     Key? key,
     required this.source,
     required this.onDelete,
   }) : super(key: key);
 
   @override
-  AudioPlayerState createState() => AudioPlayerState();
+  AudioRecPlayerState createState() => AudioRecPlayerState();
 }
 
-class AudioPlayerState extends State<AudioPlayer> {
+class AudioRecPlayerState extends State<AudioRecPlayer> {
   static const double _controlSize = 56;
   static const double _deleteBtnSize = 24;
 

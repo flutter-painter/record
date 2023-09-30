@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
 import 'package:record_example/audio_player.dart';
+import 'package:record_example/chat_item.dart';
 
 // import 'dart:html' as html;
 
@@ -296,28 +297,46 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: showPlayer
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: AudioPlayer(
-                    source: audioPath!,
-                    onDelete: () {
-                      setState(() => showPlayer = false);
-                    },
-                  ),
-                )
-              : _AudioRecorder(
-                  onStop: (path) {
-                    if (kDebugMode) print('Recorded file path: $path');
-                    setState(() {
-                      audioPath = path;
-                      showPlayer = true;
-                    });
-                  },
-                ),
-        ),
-      ),
+          body: Column(
+        children: [
+          Flexible(
+            flex: 4,
+            fit: FlexFit.loose,
+            child: Column(
+              children: [
+                ChatItemWidget(1),
+                ChatItemWidget(2),
+                ChatItemWidget(3),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Center(
+              child: showPlayer
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: AudioRecPlayer(
+                        source: audioPath!,
+                        onDelete: () {
+                          setState(() => showPlayer = false);
+                        },
+                      ),
+                    )
+                  : _AudioRecorder(
+                      onStop: (path) {
+                        if (kDebugMode) print('Recorded file path: $path');
+                        setState(() {
+                          audioPath = path;
+                          showPlayer = true;
+                        });
+                      },
+                    ),
+            ),
+          ),
+        ],
+      )),
     );
   }
 }
