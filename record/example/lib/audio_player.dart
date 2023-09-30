@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
   static const double _controlSize = 56;
   static const double _deleteBtnSize = 24;
 
-  final _audioPlayer = ap.AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+  final _audioPlayer = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
   late StreamSubscription<void> _playerStateChangedSubscription;
   late StreamSubscription<Duration?> _durationChangedSubscription;
   late StreamSubscription<Duration> _positionChangedSubscription;
@@ -38,19 +37,13 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
   void initState() {
     _playerStateChangedSubscription =
         _audioPlayer.onPlayerComplete.listen((state) async {
-      await stop();
+      await _audioPlayer.stop();
       setState(() {});
     });
-    _positionChangedSubscription = _audioPlayer.onPositionChanged.listen(
-      (position) => setState(() {
-        _position = position;
-      }),
-    );
-    _durationChangedSubscription = _audioPlayer.onDurationChanged.listen(
-      (duration) => setState(() {
-        _duration = duration;
-      }),
-    );
+    _positionChangedSubscription = _audioPlayer.onPositionChanged
+        .listen((position) => setState(() => _position = position));
+    _durationChangedSubscription = _audioPlayer.onDurationChanged
+        .listen((duration) => setState(() => _duration = duration));
 
     super.initState();
   }
@@ -81,8 +74,8 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                   icon: const Icon(Icons.delete,
                       color: Color(0xFF73748D), size: _deleteBtnSize),
                   onPressed: () {
-                    if (_audioPlayer.state == ap.PlayerState.playing) {
-                      stop().then((value) => widget.onDelete());
+                    if (_audioPlayer.state == PlayerState.playing) {
+                      _audioPlayer.stop().then((value) => widget.onDelete());
                     } else {
                       widget.onDelete();
                     }
@@ -90,7 +83,16 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                 ),
               ],
             ),
-            Text('${_duration ?? 0.0}'),
+            // wrap this in a green circle
+            IconButton(
+              icon: const Icon(Icons.send),
+              onPressed: () {
+                // send to azure blob
+              },
+            ),
+            if (_duration != null)
+              Text(
+                  '${_position?.inSeconds ?? ''} / ${_duration?.inSeconds ?? ''} sec'),
           ],
         );
       },
@@ -101,7 +103,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
     Icon icon;
     Color color;
 
-    if (_audioPlayer.state == ap.PlayerState.playing) {
+    if (_audioPlayer.state == PlayerState.playing) {
       icon = const Icon(Icons.pause, color: Colors.red, size: 30);
       color = Colors.red.withOpacity(0.1);
     } else {
@@ -117,8 +119,8 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
           child:
               SizedBox(width: _controlSize, height: _controlSize, child: icon),
           onTap: () {
-            if (_audioPlayer.state == ap.PlayerState.playing) {
-              pause();
+            if (_audioPlayer.state == PlayerState.playing) {
+              _audioPlayer.pause();
             } else {
               play();
             }
@@ -161,11 +163,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
 
   Future<void> play() {
     return _audioPlayer.play(
-      kIsWeb ? ap.UrlSource(widget.source) : ap.DeviceFileSource(widget.source),
+      kIsWeb ? UrlSource(widget.source) : DeviceFileSource(widget.source),
     );
   }
-
-  Future<void> pause() => _audioPlayer.pause();
-
-  Future<void> stop() => _audioPlayer.stop();
 }
