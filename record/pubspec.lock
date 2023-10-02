@@ -98,10 +98,10 @@ packages:
     dependency: "direct main"
     description:
       name: record_darwin
-      sha256: f5ba70c349dc9804fd321ebe818fa15d1b54373e2e545a09b36672e8b449668a
+      sha256: "07f31e531d9b12797a1b9749e290daa8c4a5e17145ec09f655cbf97814a36c5a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0-beta.2"
+    version: "1.0.0-beta.2+3"
   record_platform_interface:
     dependency: "direct main"
     description:
